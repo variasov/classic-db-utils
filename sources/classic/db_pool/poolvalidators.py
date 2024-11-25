@@ -72,9 +72,48 @@ except ImportError:
 else:
     validator(pymysql_conn, MysqlConnectionValidator)
 
+
 try:
     from MySQLdb.connections import Connection as mysqldb_conn
 except ImportError:
     pass
 else:
     validator(mysqldb_conn, MysqlConnectionValidator)
+
+
+try:
+    from pymssql import Connection as pymssql_conn
+except ImportError:
+    pass
+else:
+    @validator(pymssql_conn)
+    class PyMSSQLConnectionValidator(ConnectionValidator):
+
+        def validate(self, conn):
+            try:
+                cursor = conn.cursor()
+                cursor.execute("SELECT 1 AS [1]")
+                cursor.fetchone()
+                cursor.close()
+            except Exception:
+                return False
+            return True
+
+
+try:
+    from oracledb import Connection as oracledb_conn
+except ImportError:
+    pass
+else:
+    @validator(oracledb_conn)
+    class OracleConnectionValidator(ConnectionValidator):
+
+        def validate(self, conn):
+            try:
+                cursor = conn.cursor()
+                cursor.execute("SELECT 1 FROM DUAL")
+                cursor.fetchone()
+                cursor.close()
+            except Exception:
+                return False
+            return True
