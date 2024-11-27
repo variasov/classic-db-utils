@@ -24,7 +24,10 @@ class ConnectionValidator:
         return True
 
     def before_release(self, conn):
-        conn.rollback()
+        try:
+            conn.rollback()
+        except Exception:
+            return False
         return self.validate(conn)
 
 
