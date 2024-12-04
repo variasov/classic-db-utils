@@ -42,7 +42,8 @@ else:
     class Psycopg2ConnectionValidator(ConnectionValidator):
         def validate(self, conn):
             try:
-                conn.isolation_level
+                cur = conn.cursor()
+                cur.execute('SELECT 1')
             except Exception:
                 return False
             return True
