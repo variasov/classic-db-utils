@@ -10,7 +10,7 @@ class SomeClass:
         self.connect = connect
         self.my_connect = my_connect
 
-    @takes_connection()
+    @takes_connection
     def some_method(self, connection):
         return connection
 

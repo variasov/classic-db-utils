@@ -1,7 +1,12 @@
 from functools import wraps
 
+from classic.components import doublewrap
 
-def takes_connection(connect_attr='connect', connection_param='connection'):
+
+@doublewrap
+def takes_connection(
+        func, connect_attr='connect', connection_param='connection'
+):
     """Декоратор для автоматического получения соединения из атрибута объекта.
 
     Args:
@@ -9,15 +14,11 @@ def takes_connection(connect_attr='connect', connection_param='connection'):
         connection_param: имя параметра для передачи соединения
     """
 
-    def decorator(func):
+    @wraps(func)
+    def wrapper(obj, *args, **kwargs):
+        connect = getattr(obj, connect_attr)
+        with connect() as conn:
+            kwargs[connection_param] = conn
+            return func(obj, *args, **kwargs)
 
-        @wraps(func)
-        def wrapper(obj, *args, **kwargs):
-            connect = getattr(obj, connect_attr)
-            with connect() as conn:
-                kwargs[connection_param] = conn
-                return func(obj, *args, **kwargs)
-
-        return wrapper
-
-    return decorator
+    return wrapper
