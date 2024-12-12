@@ -54,7 +54,7 @@ class SomeClass:
     def __init__(self, connect):
         self.connect = connect  # метод для получения соединения
     
-    @takes_connection()
+    @takes_connection
     def get_user(self, user_id, connection):
         with connection.cursor() as cur:
             cur.execute('SELECT * FROM users WHERE id = %s', (user_id,))
