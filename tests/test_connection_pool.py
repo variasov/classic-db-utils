@@ -1,4 +1,4 @@
-from classic.db_pool import ConnectionPool
+from classic.db_utils import ConnectionPool
 import pymssql
 import pytest
 
