@@ -60,6 +60,35 @@ else:
             return True
 
 
+try:
+    from psycopg.connection import Connection as psycopg3_conn
+    from psycopg.pq import TransactionStatus as Psycopg3TransactionStatus
+except ImportError as e:
+    pass
+else:
+
+    @validator(psycopg3_conn)
+    class Psycopg3ConnectionValidator(ConnectionValidator):
+        def validate(self, conn):
+            try:
+                cur = conn.cursor()
+                cur.execute('SELECT 1')
+            except Exception:
+                return False
+            return True
+
+        def before_release(self, conn):
+            if conn.closed:
+                return False
+            status = conn.info.transaction_status
+            if status == Psycopg3TransactionStatus.UNKNOWN:
+                return False
+            elif status != Psycopg3TransactionStatus.IDLE:
+                conn.rollback()
+                return True
+            return True
+
+
 class MysqlConnectionValidator(ConnectionValidator):
     def validate(self, conn):
         try:
