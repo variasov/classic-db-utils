@@ -30,6 +30,7 @@ class ScopedConnection(threading.local):
     def __getattr__(self, item: str) -> Any:
         return getattr(self._conn, item)
 
+    @property
     def __module__(self) -> str:
         return self._conn.__module__
 
