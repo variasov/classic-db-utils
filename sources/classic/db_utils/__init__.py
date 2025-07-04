@@ -1,2 +1,5 @@
 from .pool import ConnectionPool
-from .takes_connection import takes_connection
+from .scoped_connection import ScopedConnection, Transaction
+
+
+tx = transaction = Transaction
