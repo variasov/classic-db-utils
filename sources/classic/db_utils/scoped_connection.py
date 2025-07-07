@@ -31,8 +31,8 @@ class ScopedConnection(threading.local):
         return getattr(self._conn, item)
 
     @property
-    def __module__(self) -> str:
-        return self._conn.__module__
+    def wrapped_conn_cls(self) -> str:
+        return self._conn.__class__
 
 
 class Transaction:
